@@ -1,6 +1,6 @@
 # Technical Plan: Issue #3 - Add select/deselect all checkbox to item grid
 
-**Status:** Approved
+**Status:** Complete
 **Branch:** feat/select-all-items-issue-3
 **Created:** 2026-03-30T22:09:00Z
 **Issue:** #3
@@ -20,7 +20,7 @@ Extend the existing `included` field and `toggleIncluded` pattern. Add a `toggle
 ### Phase 1: Update Checkbox primitive for indeterminate support
 **Goal:** The shadcn `<Checkbox>` visually distinguishes checked vs. indeterminate states.
 
-- [ ] Task 1.1: Update `src/components/ui/checkbox.tsx` to render a `MinusIcon` when `data-state="indeterminate"` and `CheckIcon` when `data-state="checked"`
+- [x] Task 1.1: Update `src/components/ui/checkbox.tsx` to render a `MinusIcon` when `data-state="indeterminate"` and `CheckIcon` when `data-state="checked"`
   - Files: `src/components/ui/checkbox.tsx`
   - Notes: Use Radix's `checked="indeterminate"` support. Conditionally render icon based on checkbox state.
 
@@ -30,13 +30,13 @@ Extend the existing `included` field and `toggleIncluded` pattern. Add a `toggle
 ### Phase 2: Add select all logic and UI
 **Goal:** Header checkbox toggles all filtered items' `included` state.
 
-- [ ] Task 2.1: Add `toggleAllIncluded` callback in `App.tsx` that sets `included` on all filtered items based on current state
+- [x] Task 2.1: Add `toggleAllIncluded` callback in `App.tsx` that sets `included` on all filtered items based on current state
   - Files: `src/App.tsx`
   - Notes: Compute `allIncluded` and `noneIncluded` from `filteredItems`. If `noneIncluded`, set all to `true`; otherwise set all to `false`.
-- [ ] Task 2.2: Replace the static "Include" text in the desktop grid header with a `<Checkbox>` that reflects tri-state
+- [x] Task 2.2: Replace the static "Include" text in the desktop grid header with a `<Checkbox>` that reflects tri-state
   - Files: `src/App.tsx`
   - Notes: `checked={allIncluded ? true : noneIncluded ? false : "indeterminate"}`
-- [ ] Task 2.3: Add a mobile "Select all" row above the item cards (visible only on `md:hidden`)
+- [x] Task 2.3: Add a mobile "Select all" row above the item cards (visible only on `md:hidden`)
   - Files: `src/App.tsx`
   - Notes: Render a `<Checkbox>` with "Select all" label, same tri-state logic
 

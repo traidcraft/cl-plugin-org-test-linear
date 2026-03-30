@@ -3,13 +3,14 @@
 **Issue:** #3 - Add select/deselect all checkbox to item grid
 **Branch:** feat/select-all-items-issue-3
 **Created:** 2026-03-30T22:09:00Z
-**Status:** Active
+**Status:** Completed
 
 ## Skills Invoked
 
 | Timestamp | Skill | Notes |
 |-----------|-------|-------|
 | 2026-03-30T22:09:00Z | /architect | Created plan and draft PR |
+| 2026-03-30T22:15:00Z | /implement | Implemented phases 1-2 |
 
 ## MCP Servers Used
 
@@ -32,7 +33,7 @@
 
 | Phase | Commit SHA | Timestamp | Verification |
 |-------|------------|-----------|--------------|
-| _Updated at phase boundaries_ |
+| Phase 1-2 | 805b567 | 2026-03-30T22:20:00Z | Build passes, lint clean (pre-existing errors only) |
 
 ## Learnings Log
 
@@ -41,7 +42,7 @@
 
 | Timestamp | Type | Entry |
 |-----------|------|-------|
-| _Append a row each time you encounter a learning moment_ |
+| 2026-03-30T22:18:00Z | tool-tip | Radix Checkbox supports `checked="indeterminate"` natively — the indicator renders for both checked and indeterminate states, so only the icon inside needs conditional logic |
 
 **Types:**
 - `error-recovery` — Tried X, got error Y, solution was Z

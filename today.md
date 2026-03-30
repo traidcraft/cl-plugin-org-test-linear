@@ -1,0 +1,4 @@
+- allow user to select and deselect all items in the item grid
+- allow user to enter notes for each item (should display in add / edit modal, not in grid)
+- move link icons to their own column in the item grid
+- add dark mode support

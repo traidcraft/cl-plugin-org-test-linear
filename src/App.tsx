@@ -7,6 +7,7 @@ import { BudgetDialog } from "@/components/BudgetDialog"
 import { CommandPalette } from "@/components/CommandPalette"
 import { CategoryManager } from "@/components/CategoryManager"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 
 export interface Item {
@@ -146,6 +147,19 @@ export default function App() {
       ? items
       : items.filter((item) => item.category === selectedCategory)
 
+  const allIncluded = filteredItems.length > 0 && filteredItems.every((item) => item.included)
+  const noneIncluded = filteredItems.length > 0 && filteredItems.every((item) => !item.included)
+
+  const toggleAllIncluded = useCallback(() => {
+    const filteredIds = new Set(filteredItems.map((item) => item.id))
+    const newIncluded = noneIncluded
+    setItems((prev) =>
+      prev.map((item) =>
+        filteredIds.has(item.id) ? { ...item, included: newIncluded } : item
+      )
+    )
+  }, [filteredItems, noneIncluded, setItems])
+
   const taxMultiplier = 1 + taxRate / 100
 
   const handleSort = useCallback((column: SortColumn) => {
@@ -272,9 +286,24 @@ export default function App() {
             </div>
           ) : (
             <div className="space-y-2">
+              {/* Mobile Select All */}
+              <div className="md:hidden flex items-center gap-2 px-4 py-2 border-b border-border">
+                <Checkbox
+                  checked={allIncluded ? true : noneIncluded ? false : "indeterminate"}
+                  onCheckedChange={toggleAllIncluded}
+                  aria-label="Select all items"
+                />
+                <span className="text-sm font-medium text-muted-foreground">Select all</span>
+              </div>
               {/* Desktop Table Header */}
               <div className="hidden md:grid md:grid-cols-12 gap-4 px-4 pb-2 border-b border-border text-sm font-medium text-muted-foreground">
-                <div className="col-span-1">Include</div>
+                <div className="col-span-1">
+                  <Checkbox
+                    checked={allIncluded ? true : noneIncluded ? false : "indeterminate"}
+                    onCheckedChange={toggleAllIncluded}
+                    aria-label="Select all items"
+                  />
+                </div>
                 <button className="col-span-4 flex items-center gap-1 hover:text-foreground transition-colors text-left" onClick={() => handleSort("name")}>
                   Item
                   {sortColumn === "name" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />}
