@@ -18,11 +18,14 @@
 | 2026-03-30T21:58:00Z | CodeLantern MCP | create_issue | Created issue #3 |
 | 2026-03-30T22:09:00Z | CodeLantern MCP | get_issue | Validated issue spec |
 | 2026-03-30T22:09:00Z | CodeLantern MCP | update_issue | Assigned issue, added cl-planning label |
+| 2026-03-30T22:09:54Z | CodeLantern MCP | create_pull_request | Created draft PR #1 |
+| 2026-03-30T22:10:00Z | CodeLantern MCP | add_issue_comment | Linked PR #1 on issue #3 |
+| 2026-03-30T22:12:00Z | CodeLantern MCP | update_issue | Added cl-plan-approved label |
 
 ## Key Context
 
 - **Plan:** `.codelantern/plans/issue-3.md`
-- **PR:** _TBD_
+- **PR:** #1
 - **Issue:** #3
 
 ## Checkpoint History
