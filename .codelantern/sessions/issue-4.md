@@ -16,11 +16,15 @@
 | Timestamp | Server | Tool | Notes |
 |-----------|--------|------|-------|
 | 2026-03-30T23:30:00Z | CodeLantern MCP | get_issue | Fetched issue #4 for validation |
+| 2026-03-30T23:36:00Z | CodeLantern MCP | create_pull_request | Created draft PR #2 |
+| 2026-03-30T23:37:00Z | CodeLantern MCP | add_issue_comment | Linked PR #2 on issue #4 |
+| 2026-03-30T23:40:00Z | CodeLantern MCP | update_issue | Added cl-plan-ready, removed cl-planning |
+| 2026-03-30T23:41:00Z | CodeLantern MCP | update_issue | Added cl-plan-approved, removed cl-plan-ready |
 
 ## Key Context
 
 - **Plan:** `.codelantern/plans/issue-4.md`
-- **PR:** _TBD_
+- **PR:** #2
 - **Issue:** #4
 
 ## Checkpoint History
