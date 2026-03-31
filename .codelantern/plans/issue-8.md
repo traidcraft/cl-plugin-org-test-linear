@@ -1,6 +1,6 @@
 # Technical Plan: Issue #8 - Add select/deselect all checkbox to item grid
 
-**Status:** Approved
+**Status:** Complete
 **Branch:** feature/tra-8-add-select-deselect-all-checkbox-to-item-grid
 **Created:** 2026-03-31T14:17:00Z
 **Issue:** #8
@@ -28,19 +28,19 @@ This approach was chosen because:
 
 **Goal:** Add indeterminate visual state to Checkbox, then wire up select-all in the grid header.
 
-- [ ] Task 1.1: Update `Checkbox` component to support indeterminate state
+- [x] Task 1.1: Update `Checkbox` component to support indeterminate state
   - Files: `src/components/ui/checkbox.tsx`
   - Notes: Import `MinusIcon` from lucide-react. Inside `CheckboxPrimitive.Indicator`, conditionally render `MinusIcon` when `data-state="indeterminate"` and `CheckIcon` when `data-state="checked"`. Add `data-[state=indeterminate]` CSS classes matching the checked state styling (bg-primary, text-primary-foreground, border-primary).
 
-- [ ] Task 1.2: Add `toggleAllIncluded` callback to App.tsx
+- [x] Task 1.2: Add `toggleAllIncluded` callback to App.tsx
   - Files: `src/App.tsx`
   - Notes: Add a `useCallback` that takes `filteredItems` IDs, determines current all-included state, and calls `setItems` to set `included` on matching items. If all are included → set all to false; otherwise → set all to true.
 
-- [ ] Task 1.3: Derive header checkbox state
+- [x] Task 1.3: Derive header checkbox state
   - Files: `src/App.tsx`
   - Notes: Add `useMemo` computing: `allIncluded` (every filtered item included), `noneIncluded` (no filtered item included). Header checkbox `checked` value: `allIncluded ? true : noneIncluded ? false : "indeterminate"`.
 
-- [ ] Task 1.4: Replace "Include" header text with Checkbox
+- [x] Task 1.4: Replace "Include" header text with Checkbox
   - Files: `src/App.tsx`
   - Notes: Import `Checkbox`. Replace `<div className="col-span-1">Include</div>` with `<div className="col-span-1"><Checkbox checked={...} onCheckedChange={toggleAllIncluded} /></div>`.
 

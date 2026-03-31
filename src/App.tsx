@@ -7,6 +7,7 @@ import { BudgetDialog } from "@/components/BudgetDialog"
 import { CommandPalette } from "@/components/CommandPalette"
 import { CategoryManager } from "@/components/CategoryManager"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 
 export interface Item {
@@ -101,6 +102,18 @@ export default function App() {
     )
   }, [setItems])
 
+  const toggleAllIncluded = useCallback(() => {
+    const filteredIds = new Set(
+      (selectedCategory === "All" ? items : items.filter((item) => item.category === selectedCategory)).map((item) => item.id)
+    )
+    const allIncluded = items.filter((item) => filteredIds.has(item.id)).every((item) => item.included)
+    setItems((prev) =>
+      prev.map((item) =>
+        filteredIds.has(item.id) ? { ...item, included: !allIncluded } : item
+      )
+    )
+  }, [items, selectedCategory, setItems])
+
   // Export data as JSON
   const handleExport = useCallback(() => {
     const data: AppState = { items, budget, projectName, categories, taxRate }
@@ -145,6 +158,13 @@ export default function App() {
     selectedCategory === "All"
       ? items
       : items.filter((item) => item.category === selectedCategory)
+
+  const headerChecked = useMemo(() => {
+    if (filteredItems.length === 0) return false
+    const allIncluded = filteredItems.every((item) => item.included)
+    const noneIncluded = filteredItems.every((item) => !item.included)
+    return allIncluded ? true : noneIncluded ? false : "indeterminate" as const
+  }, [filteredItems])
 
   const taxMultiplier = 1 + taxRate / 100
 
@@ -274,7 +294,9 @@ export default function App() {
             <div className="space-y-2">
               {/* Desktop Table Header */}
               <div className="hidden md:grid md:grid-cols-12 gap-4 px-4 pb-2 border-b border-border text-sm font-medium text-muted-foreground">
-                <div className="col-span-1">Include</div>
+                <div className="col-span-1 flex items-center">
+                  <Checkbox checked={headerChecked} onCheckedChange={toggleAllIncluded} />
+                </div>
                 <button className="col-span-4 flex items-center gap-1 hover:text-foreground transition-colors text-left" onClick={() => handleSort("name")}>
                   Item
                   {sortColumn === "name" ? (sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />}
