@@ -1,6 +1,6 @@
 # Technical Plan: Issue #4 - Add select all / deselect all checkbox to item grid
 
-**Status:** Approved
+**Status:** Complete
 **Branch:** feature/tra-4-add-select-all-deselect-all-checkbox-to-item-grid
 **Created:** 2026-03-30T23:30:00Z
 **Issue:** #4
@@ -29,32 +29,32 @@ Extend the existing Radix UI Checkbox component to render a `MinusIcon` for the 
 
 **Goal:** The Checkbox component visually renders all three states (checked, indeterminate, unchecked).
 
-- [ ] Task 1.1: Add `MinusIcon` import from `lucide-react` to `src/components/ui/checkbox.tsx`
-- [ ] Task 1.2: Add `data-[state=indeterminate]` Tailwind classes to the Root element (mirror the `data-[state=checked]` styles so the indeterminate state has the same filled background/border)
-- [ ] Task 1.3: Update the Indicator's children to conditionally render `MinusIcon` for indeterminate or `CheckIcon` for checked. Use Radix's render function pattern or read the `checked` prop to decide which icon to show. Approach:
+- [x] Task 1.1: Add `MinusIcon` import from `lucide-react` to `src/components/ui/checkbox.tsx`
+- [x] Task 1.2: Add `data-[state=indeterminate]` Tailwind classes to the Root element (mirror the `data-[state=checked]` styles so the indeterminate state has the same filled background/border)
+- [x] Task 1.3: Update the Indicator's children to conditionally render `MinusIcon` for indeterminate or `CheckIcon` for checked. Use Radix's render function pattern or read the `checked` prop to decide which icon to show. Approach:
   - Accept a `checked` prop (already passed through via `...props`)
   - Inside `CheckboxPrimitive.Indicator`, render both icons but use CSS `group-data-[state=indeterminate]` / `group-data-[state=checked]` to show/hide the correct one. Alternatively, use the Radix `forceMount` on Indicator and conditionally render based on prop value.
   - Simplest: render a wrapper that checks `props.checked === "indeterminate"` to pick the icon.
   - Files: `src/components/ui/checkbox.tsx`
-- [ ] Task 1.4: Add an `Indeterminate` story to `src/components/ui/checkbox.stories.tsx`
+- [x] Task 1.4: Add an `Indeterminate` story to `src/components/ui/checkbox.stories.tsx`
   - Args: `checked: "indeterminate"` (controlled)
   - Verifies the MinusIcon renders correctly
 
 **Checkpoint criteria:**
-- [ ] Checkbox renders CheckIcon when checked, MinusIcon when indeterminate, nothing when unchecked
-- [ ] Existing checkbox usage is unaffected (no prop changes needed)
-- [ ] Storybook story shows all three states
+- [x] Checkbox renders CheckIcon when checked, MinusIcon when indeterminate, nothing when unchecked
+- [x] Existing checkbox usage is unaffected (no prop changes needed)
+- [x] Storybook story shows all three states
 
 ### Phase 2: Wire select-all into the desktop grid header
 
 **Goal:** Header checkbox replaces "Include" text and bulk-toggles all items.
 
-- [ ] Task 2.1: Add computed state derivation after existing `toggleIncluded` (around line 102 of `src/App.tsx`):
+- [x] Task 2.1: Add computed state derivation after existing `toggleIncluded` (around line 102 of `src/App.tsx`):
   ```typescript
   const allIncluded = items.length > 0 && items.every((item) => item.included)
   const noneIncluded = items.every((item) => !item.included)
   ```
-- [ ] Task 2.2: Add `toggleAllIncluded` callback:
+- [x] Task 2.2: Add `toggleAllIncluded` callback:
   ```typescript
   const toggleAllIncluded = useCallback(() => {
     setItems((prev) => {
@@ -64,7 +64,7 @@ Extend the existing Radix UI Checkbox component to render a `MinusIcon` for the 
   }, [setItems])
   ```
   Logic: if all included → uncheck all; otherwise (some or none) → check all. Matches spec behavior.
-- [ ] Task 2.3: Replace the "Include" header `<div>` at line 277 with:
+- [x] Task 2.3: Replace the "Include" header `<div>` at line 277 with:
   ```tsx
   <div className="col-span-1">
     <Checkbox
@@ -76,16 +76,16 @@ Extend the existing Radix UI Checkbox component to render a `MinusIcon` for the 
   ```
   - Files: `src/App.tsx`
   - Notes: Add `Checkbox` to imports from `@/components/ui/checkbox`
-- [ ] Task 2.4: Verify budget total recalculates — no changes needed to `totalCost` or `categoryBreakdown` (lines 183-194) since they already filter by `item.included`
+- [x] Task 2.4: Verify budget total recalculates — no changes needed to `totalCost` or `categoryBreakdown` (lines 183-194) since they already filter by `item.included`
 
 **Checkpoint criteria:**
-- [ ] Header checkbox shows checked when all items included
-- [ ] Header checkbox shows indeterminate when some items included
-- [ ] Header checkbox shows unchecked when no items included
-- [ ] Clicking header checkbox toggles all items
-- [ ] Budget total updates immediately after bulk toggle
-- [ ] Individual item checkboxes still work and update header state
-- [ ] Mobile layout unchanged (header only in `hidden md:grid` container)
+- [x] Header checkbox shows checked when all items included
+- [x] Header checkbox shows indeterminate when some items included
+- [x] Header checkbox shows unchecked when no items included
+- [x] Clicking header checkbox toggles all items
+- [x] Budget total updates immediately after bulk toggle
+- [x] Individual item checkboxes still work and update header state
+- [x] Mobile layout unchanged (header only in `hidden md:grid` container)
 
 ## Files to Modify
 

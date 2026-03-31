@@ -45,6 +45,12 @@ export const WithLabel: Story = {
   ),
 };
 
+export const Indeterminate: Story = {
+  args: {
+    checked: "indeterminate",
+  },
+};
+
 export const Multiple: Story = {
   render: (args) => (
     <div className="space-y-3">
