@@ -19,11 +19,15 @@
 | 2026-03-31T14:11:20Z | CodeLantern MCP | update_issue | Set size to S |
 | 2026-03-31T14:14:31Z | CodeLantern MCP | update_issue | Set priority to Medium |
 | 2026-03-31T14:16:59Z | CodeLantern MCP | update_issue | Assigned issue, added cl-planning label |
+| 2026-03-31T14:17:38Z | CodeLantern MCP | create_pull_request | Created draft PR #3 |
+| 2026-03-31T14:17:40Z | CodeLantern MCP | add_issue_comment | Linked PR to issue |
+| 2026-03-31T14:26:26Z | CodeLantern MCP | update_issue | Added cl-plan-ready label |
+| 2026-03-31T14:28:19Z | CodeLantern MCP | update_issue | Plan approved, swapped to cl-plan-approved |
 
 ## Key Context
 
 - **Plan:** `.codelantern/plans/issue-8.md`
-- **PR:** TBD
+- **PR:** #3
 - **Issue:** #8
 
 ## Checkpoint History
