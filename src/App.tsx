@@ -15,6 +15,7 @@ export interface Item {
   category: string
   price: number
   link?: string
+  notes?: string
   included: boolean
   taxable: boolean
 }

@@ -7,6 +7,7 @@ export const mockItems: Item[] = [
     category: "Audio",
     price: 129.99,
     link: "https://example.com/yeti",
+    notes: "Cardioid pattern is enough for voiceover; skip the shock mount for now.",
     included: true,
     taxable: true,
   },
