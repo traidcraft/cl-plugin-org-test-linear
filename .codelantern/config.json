@@ -1,0 +1,6 @@
+{
+  "repository": { "owner": "traidcraft", "name": "cl-plugin-org-test-linear" },
+  "pm": { "provider": "linear" },
+  "scm": { "provider": "github" },
+  "version": "0.1.0"
+}

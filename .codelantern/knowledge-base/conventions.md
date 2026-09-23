@@ -1,0 +1,5 @@
+---
+type: conventions
+---
+
+# Conventions

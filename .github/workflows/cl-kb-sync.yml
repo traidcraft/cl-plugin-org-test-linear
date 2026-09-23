@@ -1,0 +1,127 @@
+name: CodeLantern KB Sync
+
+# Mirrors this repo's knowledge base to CodeLantern.
+#
+# On every push to the default branch that changes a file under
+# .codelantern/knowledge-base/, this workflow uploads those files to your
+# CodeLantern organization. The sync is one-way: it only reads your repo and
+# sends to CodeLantern — it never writes back to your repo.
+#
+# No CodeLantern secret is required: each run proves this repo's identity with
+# GitHub OIDC (the `id-token: write` permission below) and exchanges that proof
+# for a short-lived CodeLantern session token. The only prerequisite is that the
+# CodeLantern GitHub App is installed on this repository.
+#
+# It reads the checked-out files and nothing else (contents: read).
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".codelantern/knowledge-base/**"
+  workflow_dispatch: {} # manual re-sync / first run after install
+
+permissions:
+  contents: read # only reads the checkout; never writes the repo
+  # Lets the run request a GitHub OIDC token — how it authenticates to
+  # CodeLantern without a stored secret. NOTE: a job-level `permissions:`
+  # block would silently discard this workflow-level grant.
+  id-token: write
+
+env:
+  # CodeLantern platform URL — you do not normally need to change this. The
+  # publish bake rewrites it per environment (internal→staging, external→prod).
+  CL_PLATFORM_URL: https://cl-platform-portal-staging.vercel.app
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Collect KB files into a JSON payload
+        id: collect
+        run: |
+          set -euo pipefail
+          shopt -s globstar nullglob
+          files=( .codelantern/knowledge-base/**/*.md )
+          # Preflight: with no KB files there is nothing to sync. Exit 0 without
+          # calling the platform — an empty payload is never sent (to empty the
+          # mirror, disconnect the repo in the portal instead).
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No knowledge-base files found; nothing to sync."
+            echo "synced_files=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Build the request body with jq so all content is safely escaped.
+          # source_file is the path relative to .codelantern/knowledge-base/.
+          # The per-file objects stream through the pipe into a single `jq -s`,
+          # which slurps them (as `.`) and wraps them with ref/repo. Nothing that
+          # scales with KB size is ever passed as a command-line argument — only
+          # the two small scalars are — so this can't hit the kernel's per-argument
+          # length limit (which the old `--argjson files "$files_json"` did once
+          # the combined KB content grew past ~128 KB).
+          for f in "${files[@]}"; do
+            jq -n --arg sf "${f#.codelantern/knowledge-base/}" --rawfile c "$f" \
+              '{source_file: $sf, content: $c}'
+          done | jq -s \
+            --arg ref "${{ github.ref }}" \
+            --arg repo "${{ github.repository }}" \
+            '{ref: $ref, repo: $repo, files: .}' > "$RUNNER_TEMP/kb-sync-payload.json"
+          echo "synced_files=${#files[@]}" >> "$GITHUB_OUTPUT"
+
+      - name: Sync to the CodeLantern platform
+        if: steps.collect.outputs.synced_files != '0'
+        run: |
+          set -euo pipefail
+          # Authenticate with GitHub OIDC — no stored CodeLantern secret. Prove
+          # this repo's identity, then exchange the proof for a short-lived
+          # session token bound to the KB-sync endpoint (the exchanged token's
+          # audience is this endpoint's URL; the endpoint enforces that).
+          OIDC_TOKEN=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${CL_PLATFORM_URL}" | jq -r '.value')
+          if [ -z "$OIDC_TOKEN" ] || [ "$OIDC_TOKEN" = "null" ]; then
+            echo "::error::Could not obtain a GitHub OIDC token. Ensure this workflow has the 'id-token: write' permission."
+            exit 1
+          fi
+          CL_TOKEN=$(curl -sS -X POST "${CL_PLATFORM_URL}/api/oauth/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" \
+            --data-urlencode "assertion=${OIDC_TOKEN}" \
+            --data-urlencode "resource=${CL_PLATFORM_URL}/api/kb/sync" \
+            | jq -r '.access_token // empty')
+          if [ -z "$CL_TOKEN" ]; then
+            echo "::error::CodeLantern token exchange failed — check that the CodeLantern GitHub App is installed on this repository."
+            exit 1
+          fi
+          # The platform accepts the sync asynchronously (202) and reconciles
+          # in the background. 429 (rate limited) and 503 (enqueue unavailable)
+          # are transient and carry a `retry_after` hint, so honor it and retry
+          # a few times; any other non-2xx is a real failure the customer sees.
+          attempt=0
+          max_attempts=3
+          while :; do
+            attempt=$((attempt + 1))
+            status=$(curl -sS -o "$RUNNER_TEMP/kb-sync-response.json" -w "%{http_code}" \
+              -X POST "$CL_PLATFORM_URL/api/kb/sync" \
+              -H "Authorization: Bearer $CL_TOKEN" \
+              -H "Content-Type: application/json" \
+              --data-binary @"$RUNNER_TEMP/kb-sync-payload.json")
+            echo "HTTP $status (attempt $attempt/$max_attempts)"
+            cat "$RUNNER_TEMP/kb-sync-response.json" || true
+            echo
+            if [ "$status" -ge 200 ] && [ "$status" -lt 300 ]; then
+              exit 0
+            fi
+            if { [ "$status" = "429" ] || [ "$status" = "503" ]; } && [ "$attempt" -lt "$max_attempts" ]; then
+              retry_after=$(jq -r '.retry_after // empty' "$RUNNER_TEMP/kb-sync-response.json" 2>/dev/null || true)
+              [ -n "$retry_after" ] || retry_after=30
+              echo "Transient failure (HTTP $status); retrying in ${retry_after}s."
+              sleep "$retry_after"
+              continue
+            fi
+            echo "::error::KB sync failed (HTTP $status)."
+            exit 1
+          done
