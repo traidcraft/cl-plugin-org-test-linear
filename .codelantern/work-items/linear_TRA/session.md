@@ -14,6 +14,7 @@ _Historical record of work on linear_TRA, as of 2026-09-22. The codebase and git
 | Timestamp | Skill | Notes |
 |---|---|---|
 | 2026-09-22 | /implement | Single-phase XS; continuous pacing, single context |
+| 2026-09-22 | /consolidate | 2 learnings written (1 DO, 1 DON'T); 1 project-fact candidate declined |
 
 ### MCP tools used
 
@@ -22,11 +23,19 @@ _Historical record of work on linear_TRA, as of 2026-09-22. The codebase and git
 | 2026-09-22 | CodeLantern | update_issue | cl-plan-approved + cl-implementing, removed cl-plan-ready |
 | 2026-09-22 | CodeLantern | update_pull_request | Checked plan-approved; status → Implementing |
 
+### Surfaced candidates
+
+| Type | Candidate | Rationale |
+|---|---|---|
+| learning | DO: add a new item field in two files (Item + AddItemForm) | Field-agnostic data flow means no persistence/export/import wiring — captured in learnings.md |
+| learning | DON'T: read a red `npm run lint` as your change failing | 3 pre-existing baseline lint errors — captured in learnings.md |
+| project | Repo has 3 known pre-existing lint errors | Declined by author — left as the DON'T learning rather than a durable project.md fact |
+
 ### Phase checkpoints
 
 | Phase | Commit | Verification |
 |---|---|---|
-| 1 | _pending push_ | build pass; lint clean on the 3 edited files (3 pre-existing errors in untouched files); manual browser checks pending |
+| 1 | 065030a | build pass; lint clean on the 3 edited files (3 pre-existing errors in untouched files); manual browser checks pending |
 
 ### Activity
 
