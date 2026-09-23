@@ -7,7 +7,7 @@ _Historical record of work on linear_TRA, as of 2026-09-22. The codebase and git
 
 # Technical Plan: Issue TRA-11 — Add optional notes field to budget items
 
-**Status:** In Progress
+**Status:** Complete
 **Branch:** feature/tra-11-add-optional-notes-field-to-budget-items
 **Created:** 2026-09-22
 **Issue:** TRA-11
