@@ -19,6 +19,7 @@ export function AddItemForm({ categories, onAdd, editItem, onUpdate, taxRate }: 
   const [category, setCategory] = useState(editItem?.category || "")
   const [price, setPrice] = useState(editItem?.price.toString() || "")
   const [link, setLink] = useState(editItem?.link || "")
+  const [notes, setNotes] = useState(editItem?.notes || "")
   const [taxable, setTaxable] = useState(editItem?.taxable ?? true)
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,6 +30,7 @@ export function AddItemForm({ categories, onAdd, editItem, onUpdate, taxRate }: 
         category,
         price: parseFloat(price),
         link: link.trim() || undefined,
+        notes: notes.trim() || undefined,
         taxable,
       }
 
@@ -41,6 +43,7 @@ export function AddItemForm({ categories, onAdd, editItem, onUpdate, taxRate }: 
       setName("")
       setPrice("")
       setLink("")
+      setNotes("")
       setTaxable(true)
     }
   }
@@ -102,6 +105,18 @@ export function AddItemForm({ categories, onAdd, editItem, onUpdate, taxRate }: 
           value={link}
           onChange={(e) => setLink(e.target.value)}
           placeholder="https://..."
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="notes">Notes (optional)</Label>
+        <textarea
+          id="notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Any details about this item..."
+          rows={3}
+          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
         />
       </div>
 

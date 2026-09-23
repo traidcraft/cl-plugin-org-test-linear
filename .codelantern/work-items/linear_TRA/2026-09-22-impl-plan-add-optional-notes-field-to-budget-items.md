@@ -7,7 +7,7 @@ _Historical record of work on linear_TRA, as of 2026-09-22. The codebase and git
 
 # Technical Plan: Issue TRA-11 — Add optional notes field to budget items
 
-**Status:** Draft
+**Status:** In Progress
 **Branch:** feature/tra-11-add-optional-notes-field-to-budget-items
 **Created:** 2026-09-22
 **Issue:** TRA-11
@@ -26,28 +26,28 @@ Mirror the existing optional `link` field end to end. `notes` becomes an optiona
 
 **Goal:** Users can enter and edit multi-line notes on an item in the add/edit modal; notes persist and round-trip through export/import; the grid is unchanged.
 
-- [ ] Task 1.1: Add `notes?: string` to the `Item` interface.
+- [x] Task 1.1: Add `notes?: string` to the `Item` interface.
   - Files: `src/App.tsx`
   - Notes: Optional, so pre-existing persisted items (no `notes`) remain valid (AC #6). No other App changes — `addItem`/`updateItem`/export/import are field-agnostic.
-- [ ] Task 1.2: Add `notes` state to `AddItemForm`, initialized from `editItem?.notes ?? ""`.
+- [x] Task 1.2: Add `notes` state to `AddItemForm`, initialized from `editItem?.notes ?? ""`.
   - Files: `src/components/AddItemForm.tsx`
   - Notes: Pre-fills existing notes when editing (AC #2).
-- [ ] Task 1.3: Render a **Notes (optional)** `<textarea>` below the Link field, above the taxable checkbox.
+- [x] Task 1.3: Render a **Notes (optional)** `<textarea>` below the Link field, above the taxable checkbox.
   - Files: `src/components/AddItemForm.tsx`
   - Notes: Use a `<Label htmlFor="notes">` and a plain `<textarea id="notes" rows={3}>` styled to match the existing raw `<select>` className (border-input, rounded-md, focus ring). Not `required`.
-- [ ] Task 1.4: Include `notes` in the submitted `itemData` and reset it after submit.
+- [x] Task 1.4: Include `notes` in the submitted `itemData` and reset it after submit.
   - Files: `src/components/AddItemForm.tsx`
   - Notes: `notes: notes.trim() || undefined` (mirrors `link`), and add `setNotes("")` alongside the other resets. Blank stays valid (AC #1).
-- [ ] Task 1.5: Demonstrate notes in Storybook — give one `mockItems` entry a `notes` value so the `WithEditItem` story renders a populated field.
+- [x] Task 1.5: Demonstrate notes in Storybook — give one `mockItems` entry a `notes` value so the `WithEditItem` story renders a populated field.
   - Files: `src/components/__mocks__/data.ts`
   - Notes: Keeps the co-located-story convention meaningful; no new story file needed.
 
 **Checkpoint criteria:**
-- [ ] `npm run lint` passes
-- [ ] `npm run build` passes (`tsc -b && vite build` — type-checks the new field)
-- [ ] Manual: add an item with notes, reload, reopen edit → notes persist and pre-fill
-- [ ] Manual: export to JSON → notes present; import that file → notes restored
-- [ ] Manual: item grid shows no notes; an item saved before this change still loads and edits
+- [x] `npm run lint` passes — the 3 edited files lint clean; 3 pre-existing errors remain in untouched files (`BudgetDialog`, `ui/badge`, `ui/button`), confirmed on the baseline (see `decisions.md`)
+- [x] `npm run build` passes (`tsc -b && vite build` — type-checks the new field; 1838 modules, success)
+- [ ] Manual: add an item with notes, reload, reopen edit → notes persist and pre-fill _(verified by construction — persistence path is field-agnostic; pending an in-browser pass via `/run`)_
+- [ ] Manual: export to JSON → notes present; import that file → notes restored _(verified by construction — export/import serialize the whole item; pending in-browser pass)_
+- [ ] Manual: item grid shows no notes; an item saved before this change still loads and edits _(grid untouched by construction; backward-compat holds via optional field; pending in-browser pass)_
 
 ## Files to Modify
 
